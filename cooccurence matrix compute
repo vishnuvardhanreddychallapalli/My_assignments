@@ -1,0 +1,45 @@
+import pandas as pd
+import numpy as np
+text1="hi how are you doing my name is vishnu"
+text2="hi hwllo hwllo hello vannakam this is vamsi and vishnu eaing maggi eating fine unta bye"
+text3="hi ra bye ra vamsi vishnu vimala sreenu praveen harsha mama"
+s=set()
+list_of_files=list()
+list_of_files.append(text1)
+list_of_files.append(text2)
+list_of_files.append(text3)
+list_of_files
+for each_text in list_of_files:
+    curr_text=each_text
+    for each_word in curr_text.split():
+        s.add(each_word)
+x_train=np.zeros((len(s),len(s)))
+df=pd.DataFrame(x_train,columns=list(s))
+neigh=5
+all_words=list(s)
+###
+### procedure to compute coocurence matrix.....
+### 1.first i will take each_row_word and go on checking with respect to the context word...
+### 2.how to check with respect to context word(go and search in all files to compute it... on hack is try checking whether curr_word and context word is present in afile before searching...(saves a lot of time)
+for i in range(len(list(s))):
+    for j in range(len(list(s))):
+        if(all_words[i]==all_words[j]):
+            continue
+        else:
+            for each_text_file in list_of_files:
+                ## Now take each_text_file and check both the all_words[i] and all_words[j] are present within a neighborhood of 5
+                ## simple hack before going into the text file..
+                present_words=each_text_file.split()
+                if(all_words[i] in present_words and all_words[j] in present_words):
+                    for index in range(len(present_words)):
+                        if(present_words[index]==all_words[j]):
+                            ### once i fine the context word i need to check from this index to index+5 and index-5 to index for the curr_words
+                            left_index=index-neigh
+                            right_index=index+neigh
+                            for p in (np.arange(left_index,right_index+1)):
+                                if p==index:
+                                    continue
+                                if(p>=0 and p<len(present_words)):
+                                    if(all_words[i]==present_words[p]):
+                                        ### now you need to update df[i][j]..
+                                        df.iloc[i][j]=df.iloc[i][j]+1
